@@ -4,16 +4,18 @@ include('includes/config.php');
 if(isset($_POST['login'])){
 	$userid=$_POST['userid'];
 	$password=$_POST['password'];
-	$sql ="SELECT id,clave,nombres FROM recepcionistas WHERE id=:v1 and clave=:v2";
+	$sql ="SELECT * FROM recepcionistas WHERE id=:v1 and clave=:v2";
 	$query= $dbh -> prepare($sql);
 	$query-> bindParam(':v1', $userid, PDO::PARAM_STR);
 	$query-> bindParam(':v2', $password, PDO::PARAM_STR);
 	$query-> execute();
 	$result=$query->fetch(PDO::FETCH_OBJ);
-	if($query->rowCount() > 0){
-		$_SESSION['idlogin']=$result->id;
-		$_SESSION['alogin']=$result->nombres;
-		echo "<script type='text/javascript'> document.location = 'recepcionistas.php'; </script>";
+	if($query->rowCount()!==0){
+		$_SESSION['ilogin']=$result->id;
+		$_SESSION['nlogin']=$result->nombres;
+		$_SESSION['img_login']=$result->imagen;
+		$_SESSION['alogin']=false;
+		echo "<script type='text/javascript'> document.location = 'admin-guests.php'; </script>";
 	}else{
 		echo "<script>alert('Datos no válidos');</script>";
 	}
@@ -52,8 +54,7 @@ if(isset($_POST['login'])){
 						<div class="well row pt-2x pb-3x bk-light">
 							<div class="col-md-8 col-md-offset-2">
 								<form method="post">
-
-									<label for="" class="text-uppercase text-sm">Usuario</label>
+									<label for="" class="text-uppercase text-sm">Identificación</label>
 									<input type="tel" placeholder="Id de usuario" name="userid" class="form-control mb" required>
 
 									<label for="" class="text-uppercase text-sm">Contraseña</label>

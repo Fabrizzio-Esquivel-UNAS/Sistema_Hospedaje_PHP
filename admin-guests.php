@@ -2,28 +2,24 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-if(strlen($_SESSION['alogin'])==0)
-	{	
-header('location:index.php');
-}
-else{
-if(isset($_GET['del']))
-{
-$id=$_GET['del'];
-$sql = 
-"DELETE FROM recepcionistas WHERE id=:id";
-$query = $dbh->prepare($sql);
-$query -> bindParam(':id',$id, PDO::PARAM_STR);
-$query -> execute();
-
-$msg="Datos eliminados correctamente";
+if($_SESSION===NULL){
+	header('location:index.php');
+	exit;
 }
 
+$msg; $error;
 
+if(isset($_GET['del'])){
+	$sql = "DELETE FROM huespedes WHERE id=:id";
+	$query = $dbh->prepare($sql);
+	$query -> bindParam(':id', $_GET['del'], PDO::PARAM_STR);
+	$query -> execute();
+	$msg = "Datos eliminados correctamente";
+}else if(isset($_GET['msg'])){
+	$msg = urldecode($_GET['msg']);
+}
 
-
-
- ?>
+?>
 
 <!doctype html>
 <html lang="en" class="no-js">
@@ -36,7 +32,7 @@ $msg="Datos eliminados correctamente";
 	<meta name="author" content="">
 	<meta name="theme-color" content="#3e454c">
 	
-	<title>Gestionar recepcionistas</title>
+	<title>Huespedes</title>
 
 	<!-- Font awesome -->
 	<link rel="stylesheet" href="css/font-awesome.min.css">
@@ -54,90 +50,89 @@ $msg="Datos eliminados correctamente";
 	<link rel="stylesheet" href="css/awesome-bootstrap-checkbox.css">
 	<!-- Admin Stye -->
 	<link rel="stylesheet" href="css/style.css">
-  <style>
-
+	<style>
 	.errorWrap {
-    padding: 10px;
-    margin: 0 0 20px 0;
-	background: #dd3d36;
-	color:#fff;
-    -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-}
-.succWrap{
-    padding: 10px;
-    margin: 0 0 20px 0;
-	background: #5cb85c;
-	color:#fff;
-    -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-}
-
-		</style>
-
+		padding: 10px;
+		margin: 0 0 20px 0;
+		background: #dd3d36;
+		color:#fff;
+		-webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+		box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+	}
+	.succWrap{
+		padding: 10px;
+		margin: 0 0 20px 0;
+		background: #5cb85c;
+		color:#fff;
+		-webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+		box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+	}
+	</style>
 </head>
 
 <body>
 	<?php include('includes/header.php');?>
-
 	<div class="ts-main-content">
 		<?php include('includes/leftbar.php');?>
 		<div class="content-wrapper">
 			<div class="container-fluid">
-
 				<div class="row">
 					<div class="col-md-12">
-
-						<h2 class="page-title">Gestionar recepcionistas</h2>
-
+						<h2 class="page-title">Huespedes</h2>
 						<!-- Zero Configuration Table -->
 						<div class="panel panel-default">
-							<div class="panel-heading">Lista de recepcionistas</div>
+							<div class="panel-heading">Lista de Huespedes</div>
 							<div class="panel-body">
-							<?php if($error){?><div class="errorWrap" id="msgshow"><?php echo htmlentities($error); ?> </div><?php } 
-				else if($msg){?><div class="succWrap" id="msgshow"><?php echo htmlentities($msg); ?> </div><?php }?>
+							<?php if($error){?>
+								<div class="errorWrap" id="msgshow"> <?php echo htmlentities($error);?> </div>
+							<?php } else if($msg){?>
+								<div class="succWrap" id="msgshow"> <?php echo htmlentities($msg);?> </div>
+							<?php }?>
 								<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 									<thead>
 										<tr>
-										<th>ID</th>
-                                                <th>Nombre(s)</th>
-												<th>Apellido(s)</th>
-												<th>Telefono</th>
-                                                <th>Correo</th>
+											<th>ID</th>
+											<th>Nombre(s)</th>
+											<th>Apellido(s)</th>
+											<th>Documento</th>
+											<th>Habitación</th>
 											<th>Acción</th>	
 										</tr>
 									</thead>
-									
 									<tbody>
-
-<?php $sql = 
-"SELECT * FROM recepcionistas";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
-if($query->rowCount() > 0)
-{
-foreach($results as $result)
-{				?>	
+									<?php
+									$sql = "SELECT * FROM huespedes";
+									$query = $dbh -> prepare($sql);
+									$query->execute();
+									$results=$query->fetchAll(PDO::FETCH_OBJ);
+									if($query->rowCount() > 0){
+										foreach($results as $result){?>
 										<tr>
 											<td><?php echo htmlentities($result->id);?></td>
                                             <td><?php echo htmlentities($result->nombres);?></td>
                                             <td><?php echo htmlentities($result->apellidos);?></td>
-                                            <td><?php echo htmlentities($result->telefono);?></td>
-											<td><?php echo htmlentities($result->correo);?></td>
-<td>
-<a href="edit-recepcionista.php?edit=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Editar?');">&nbsp; <i class="fa fa-pencil"></i></a>&nbsp;&nbsp;
-<a href="recepcionistas.php?del=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Eliminar?');"><i class="fa fa-trash" style="color:red"></i></a>&nbsp;&nbsp;
-</td>
+                                            <td><?php echo htmlentities($result->doc_num);?></td>
+                                            <td>
+												<a href="rental.php?new=<?php echo $result->id;?>">&nbsp; <i class="fa fa-address-book fa-lg"></i></a>&nbsp;&nbsp;
+											</td>
+											<td>
+												<a href="guest.php?edit=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Editar?');">&nbsp; <i class="fa fa-pencil fa-lg"></i></a>&nbsp;&nbsp;
+												<a href="admin-guests.php?del=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Eliminar?');"><i class="fa fa-trash fa-lg" style="color:red"></i></a>&nbsp;&nbsp;
+											</td>
 										</tr>
-										<?php }} ?>										
+										<?php }
+									} ?>
 									</tbody>
 								</table>
 							</div>
 						</div>
+						<div class="form-group">
+							<form action="guest.php">
+								<button class="btn btn-primary" type="submit">Añadir huesped</button>
+							</form>							
+						</div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
@@ -162,4 +157,3 @@ foreach($results as $result)
 		
 </body>
 </html>
-<?php } ?>

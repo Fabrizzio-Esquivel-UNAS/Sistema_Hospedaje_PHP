@@ -19,7 +19,10 @@
  	});
 	 
 	 
-	 $('#zctb').DataTable();
+	 $('#zctb').DataTable( {
+		"ordering": true,
+		"order": [[0, 'desc']]
+	} );
 	 
 	 
 	 $("#input-43").fileinput({
