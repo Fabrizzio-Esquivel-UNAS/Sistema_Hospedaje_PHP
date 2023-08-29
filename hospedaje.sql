@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 27, 2023 at 09:46 PM
+-- Generation Time: Aug 29, 2023 at 05:59 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -53,9 +53,17 @@ CREATE TABLE `habitaciones` (
   `id_alquiler` int DEFAULT NULL,
   `tipo` enum('SIMPLE','DOBLE','FAMILIAR','MATRIMONIAL') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `precio` double DEFAULT NULL,
-  `desc` varchar(100) DEFAULT NULL,
+  `desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `estado_limpieza` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `habitaciones`
+--
+
+INSERT INTO `habitaciones` (`id`, `id_alquiler`, `tipo`, `precio`, `desc`, `estado_limpieza`) VALUES
+('0201', NULL, 'MATRIMONIAL', 50, '1 baño propio\n1 ventana a la calle\n1 cama de 2 plazas\n1 televisión con cable y Netflix', 1),
+('0202', NULL, 'SIMPLE', 20, '1 baño propio\r\n1 cama de 1/2 plaza', 1);
 
 -- --------------------------------------------------------
 
@@ -71,7 +79,14 @@ CREATE TABLE `huespedes` (
   `doc_num` varchar(50) DEFAULT NULL,
   `sexo` enum('M','F') DEFAULT NULL,
   `fecha_registro` date DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `huespedes`
+--
+
+INSERT INTO `huespedes` (`id`, `nombres`, `apellidos`, `doc_tipo`, `doc_num`, `sexo`, `fecha_registro`) VALUES
+(1, 'Fabrizzio Fabiano', 'Esquivel Mori', 'DNI', '71668230', 'M', '2023-08-29');
 
 -- --------------------------------------------------------
 
@@ -113,8 +128,15 @@ CREATE TABLE `recepcionistas` (
   `correo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `telefono` varchar(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `clave` varchar(100) DEFAULT NULL,
-  `imagen` varchar(50) NOT NULL
+  `imagen` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'user.png'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `recepcionistas`
+--
+
+INSERT INTO `recepcionistas` (`id`, `nombres`, `apellidos`, `dni`, `correo`, `telefono`, `clave`, `imagen`) VALUES
+(1, 'Fabrizzio Fabiano', 'Esquivel Mori', '71668230', 'fabrizzio_fabiano@outlok.com', '993566249', '123', 'user.png');
 
 -- --------------------------------------------------------
 
@@ -199,7 +221,7 @@ ALTER TABLE `alquileres`
 -- AUTO_INCREMENT for table `huespedes`
 --
 ALTER TABLE `huespedes`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `movimientos`
@@ -217,7 +239,7 @@ ALTER TABLE `pagos`
 -- AUTO_INCREMENT for table `recepcionistas`
 --
 ALTER TABLE `recepcionistas`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `reservas`

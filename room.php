@@ -25,7 +25,6 @@ if(isset($_POST['submit'])){
 		$sql="INSERT INTO habitaciones VALUES (:v1, NULL, :v3, :v4, :v5, DEFAULT)";
 		$query = $dbh->prepare($sql);
 		$query-> bindParam(':v1', $_POST['id_habitacion'], PDO::PARAM_STR);
-		$msg = "Habitación (".$dbh->lastInsertId().") Añadida con Éxito";
 	}else{
 		$sql="UPDATE habitaciones SET tipo=(:v3), precio=(:v4), `desc`=(:v5) WHERE id=(:v1)";
 		$query = $dbh->prepare($sql);
@@ -38,6 +37,9 @@ if(isset($_POST['submit'])){
 
 	try {
 		$query->execute();
+		if ($id_habitacion==NULL){
+			$msg = "Habitación (".$dbh->lastInsertId().") Añadida con Éxito";
+		}		
 		header("Location: admin-rooms.php?msg=".urlencode($msg));
 		exit;
 	} catch (PDOException $e) {
@@ -189,7 +191,7 @@ if($id_habitacion){
 			}
 		</script>
 	<?php }?>
-	<?php if ($_SESSION['alogin']){?>
+	<?php if ($id_habitacion){?>
 		<script>
 			document.getElementById("id_habitacion").disabled = true;
 		</script>
