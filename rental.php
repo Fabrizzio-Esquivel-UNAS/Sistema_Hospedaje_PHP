@@ -25,12 +25,16 @@ if (isset($_GET['view'])){
 if(isset($_POST['submit'])){
 	$id_habitacion = $_POST['id_habitacion'];
 	if ($id_huesped){
-		$sql="INSERT INTO alquileres VALUES (NULL, :v2, :v3, :v4, :v5, :v6, :v7, :v8, :v9, :v10, :v11, :v12)";
+		$sql="INSERT INTO alquileres VALUES (NULL, :v2, :v3, :v4, :v5, :v6, :v7, :v8, :v9, :v10, :v11, :v12, :v13)";
 		$query = $dbh->prepare($sql);
 		$query-> bindParam(':v2', $id_huesped, PDO::PARAM_STR);
 		$msg = "Habitación (".$id_habitacion.") Alquilada con Éxito";
 	}else{
-		$sql="UPDATE alquileres SET id_habitacion=(:v3), id_recepcionista=(:v4), id_pago=(:v5), fecha_alquiler=(:v6), dias=(:v7), costo=(:v8), personas=(:v9), motivo=(:v10), procedencia=(:v11), comentarios=(:v12) WHERE id=(:v1)";
+		$sql=
+		"UPDATE alquileres 
+		SET id_habitacion=(:v3), id_recepcionista=(:v4), id_pago=(:v5), fecha_alquiler=(:v6), check_in=(:v7), 
+		check_out=(:v8), costo=(:v9), personas=(:v10), motivo=(:v11), procedencia=(:v12), comentarios=(:v13) 
+		WHERE id=(:v1)";
 		$query = $dbh->prepare($sql);
 		$query-> bindParam(':v1', $id_alquiler, PDO::PARAM_STR);
 		$msg = "Alquiler (ID: ".$id_alquiler.") Actualizado con Éxito";
@@ -44,17 +48,21 @@ if(isset($_POST['submit'])){
 		$query2->execute();
 		$id_pago = $dbh->lastInsertId();
 	}
+	if ($_POST['tipo_alquiler']==NULL){
+		$_POST['check_in'] = NULL;
+	}
 
 	$query-> bindParam(':v3', $id_habitacion, PDO::PARAM_STR);
 	$query-> bindParam(':v4', $_SESSION['ilogin'], PDO::PARAM_STR);
 	$query-> bindParam(':v5', $id_pago, PDO::PARAM_STR);
 	$query-> bindParam(':v6', $_POST['fecha_alquiler'], PDO::PARAM_STR);
-	$query-> bindParam(':v7', $_POST['dias'], PDO::PARAM_STR);
-	$query-> bindParam(':v8', $_POST['costo'], PDO::PARAM_STR);
-	$query-> bindParam(':v9', $_POST['personas'], PDO::PARAM_STR);
-	$query-> bindParam(':v10', $_POST['motivo'], PDO::PARAM_STR);
-	$query-> bindParam(':v11', $_POST['procedencia'], PDO::PARAM_STR);
-	$query-> bindParam(':v12', $_POST['comentarios'], PDO::PARAM_STR);
+	$query-> bindParam(':v7', $_POST['check_in'], PDO::PARAM_STR);
+	$query-> bindParam(':v8', $_POST['check_out'], PDO::PARAM_STR);
+	$query-> bindParam(':v9', $_POST['costo'], PDO::PARAM_STR);
+	$query-> bindParam(':v10', $_POST['personas'], PDO::PARAM_STR);
+	$query-> bindParam(':v11', $_POST['motivo'], PDO::PARAM_STR);
+	$query-> bindParam(':v12', $_POST['procedencia'], PDO::PARAM_STR);
+	$query-> bindParam(':v13', $_POST['comentarios'], PDO::PARAM_STR);
 
 	try {
 		$query->execute();
@@ -139,6 +147,10 @@ if($id_alquiler){
 			-webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
 			box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
 		}
+		/* Style the checkbox input */
+		.left-aligned-checkbox {
+			width: auto;
+		}
 	</style>
 </head>
 
@@ -169,9 +181,9 @@ if($id_alquiler){
 													}
 													?>">
 												</div>
-												<label class="col-sm-2 control-label">Fecha<span style="color:red">*</span></label>
+												<label class="col-sm-2 control-label">Fecha</label>
 												<div class="col-sm-4">
-													<input type="date" name="fecha_alquiler" class="form-control" required value="<?php 
+													<input type="date" name="fecha_alquiler" id="fecha_alquiler" class="form-control" required value="<?php 
 														if (isset($result->fecha_alquiler)){
 															echo htmlentities($result->fecha_alquiler);
 														}else{
@@ -181,19 +193,39 @@ if($id_alquiler){
 												</div>
 											</div>
 											<div class="form-group">
-											<label class="col-sm-2 control-label">Habitación<span style="color:red">*</span></label>
+												<label class="col-sm-2 control-label">Habitación<span style="color:red">*</span></label>
 												<div class="col-sm-4">
 													<input type="tel" name="id_habitacion" id="id_habitacion" class="form-control" required value="<?php echo htmlentities($result->id_habitacion);?>">
 												</div>
-												<label class="col-sm-2 control-label">Dias<span style="color:red">*</span></label>
+												<label for="pago" class="col-sm-2 control-label">Tipo</label>
 												<div class="col-sm-4">
-													<input type="number" name="dias" class="form-control" min="1" required value="<?php 
-														if (isset($result->telefono)){
-															echo htmlentities($result->telefono);
+													<select name="tipo_alquiler" id="tipo_alquiler" class="form-control" required>
+														<option hidden></option>
+														<option value='0' selected>INMEDIATO</option>
+														<option value='1' <?php if (isset($result->check_in)) echo 'selected';?>>RESERVA</option>
+													</select>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-2 control-label">Check-in</label>
+												<div class="col-sm-4">
+													<input type="date" name="check_in" id="check_in" class="form-control" required value="<?php 
+														if (isset($result->check_in)){
+															echo htmlentities($result->check_in);
 														}else{
-															echo 1;
+															echo date('Y-m-d');
 														}
-													?>">
+														?>">
+												</div>
+												<label class="col-sm-2 control-label">Check-out</label>
+												<div class="col-sm-4">
+													<input type="date" name="check_out" class="form-control" required value="<?php 
+														if (isset($result->check_out)){
+															echo htmlentities($result->check_out);
+														}else{
+															echo date('Y-m-d');
+														}
+														?>">
 												</div>
 											</div>
 											<div class="form-group">
@@ -201,7 +233,7 @@ if($id_alquiler){
 												<div class="col-sm-4">
 													<input type="text" name="costo" class="form-control" required value="<?php echo htmlentities($result->costo);?>">
 												</div>
-												<label class="col-sm-2 control-label">Personas<span style="color:red">*</span></label>
+												<label class="col-sm-2 control-label">Personas</label>
 												<div class="col-sm-4">
 													<input type="number" name="personas" class="form-control" min="1" required value="<?php 
 														if (isset($result->personas)){
@@ -223,18 +255,18 @@ if($id_alquiler){
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="pago" class="col-sm-2 control-label">Estado del pago<span style="color:red">*</span></label>
+												<label for="pago" class="col-sm-2 control-label">Estado del pago</label>
 												<div class="col-sm-4">
-													<select name="estado_pago" class="form-control" required>
+													<select name="estado_pago" id="estado_pago" class="form-control" required>
 														<option hidden></option>
 														<option value='0' selected>PENDIENTE</option>
 														<option value='1' <?php if (isset($result->id_pago)) echo 'selected';?>>REALIZADO</option>
 													</select>
 												</div>
-												<label for="pago" class="col-sm-2 control-label">Metodo de pago<span style="color:red">*</span></label>
+												<label for="pago" class="col-sm-2 control-label">Metodo de pago</label>
 												<div class="col-sm-4">
-													<select name="tipo_pago" class="form-control" required>
-														<option hidden></option>
+													<select name="tipo_pago" id="tipo_pago" class="form-control" required>
+														<option value='' hidden></option>
 														<option value='EFECTIVO' <?php if ($result->tipo_pago==='EFECTIVO') echo 'selected';?>>EFECTIVO</option>
 														<option value='YAPE' <?php if ($result->tipo_pago==='YAPE') echo 'selected';?>>YAPE</option>
 													</select>
@@ -278,6 +310,30 @@ if($id_alquiler){
 			$('.succWrap').slideUp("slow");
 		}, 3000);
 		});
+        const selectInput1 = document.getElementById("tipo_alquiler");
+        const selectInput2 = document.getElementById("estado_pago");
+        const selectInput3 = document.getElementById("fecha_alquiler");
+		const input1 = document.getElementById("check_in");
+		const input2 = document.getElementById("tipo_pago");
+		function check(){
+			if (selectInput1.value === "0"){
+				input1.disabled = true;
+				input1.value = selectInput3.value
+			}else{
+				input1.disabled = false;
+			}
+			if (selectInput2.value === "0"){
+				input2.disabled = true;
+				input2.value = ""
+			}else{
+				input2.disabled = false;
+				input2.value = "EFECTIVO"
+			}
+		}
+        selectInput1.addEventListener("change", check);
+		selectInput2.addEventListener("change", check);
+		selectInput3.addEventListener("change", check);
+		check();
 	</script>
 	<?php if (isset($_GET['view'])){?>
 		<script>

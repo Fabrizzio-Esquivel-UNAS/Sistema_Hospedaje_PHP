@@ -10,6 +10,9 @@
 			<li>
 				<a href="admin-rooms.php"><i class="fa fa-bed"></i> &nbsp;Habitaciones</a>
 			</li>
+			<li>
+				<a href="admin-bookings.php">&nbsp;<i class="fa fa-calendar"></i> &nbsp;Reservaciones</a>
+			</li>
 		</ul>
 		<p class="text-center" style="color:#ffffff; margin-top: 100px;">© Sistema de Hospedaje</p>
 		</nav>

@@ -32,7 +32,7 @@ if(isset($_GET['del'])){
 	<meta name="author" content="">
 	<meta name="theme-color" content="#3e454c">
 	
-	<title>Alquileres</title>
+	<title>Reservaciones</title>
 
 	<!-- Font awesome -->
 	<link rel="stylesheet" href="css/font-awesome.min.css">
@@ -78,10 +78,10 @@ if(isset($_GET['del'])){
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-12">
-						<h2 class="page-title">Alquileres</h2>
+						<h2 class="page-title">Reservaciones</h2>
 						<!-- Zero Configuration Table -->
 						<div class="panel panel-default">
-							<div class="panel-heading">Lista de Alquileres</div>
+							<div class="panel-heading">Lista de Reservaciones</div>
 							<div class="panel-body">
 							<?php if($error){?>
 								<div class="errorWrap" id="msgshow"> <?php echo htmlentities($error);?> </div>
@@ -94,17 +94,18 @@ if(isset($_GET['del'])){
 											<th>ID</th>
 											<th>Fecha</th>
 											<th>Huesped</th>
-											<th>Documento</th>
 											<th>Habitación</th>
-											<th>Acción</th>	
+											<th>Check-in</th>
+											<th>Check-out</th>
+											<th>Acción</th>
 										</tr>
 									</thead>
 									<tbody>
 									<?php
 									$sql = 
-									"SELECT a.id, a.fecha_alquiler, h.nombres, h.apellidos, h.doc_num, a.id_habitacion
-									FROM alquileres a 
-									INNER JOIN huespedes h ON a.id_huesped=h.id";
+									"SELECT a.id, a.fecha_alquiler, hu.nombres, hu.apellidos, a.id_habitacion, a.check_in, a.check_out FROM alquileres a 
+									INNER JOIN huespedes hu ON hu.id=a.id_huesped
+									WHERE (a.check_in IS NOT NULL) AND (a.check_in>CURDATE())";
 									$query = $dbh -> prepare($sql);
 									$query->execute();
 									$results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -114,12 +115,13 @@ if(isset($_GET['del'])){
 											<td><?php echo htmlentities($result->id);?></td>
                                             <td><?php echo htmlentities($result->fecha_alquiler);?></td>
                                             <td><?php echo htmlentities($result->nombres." ".$result->apellidos);?></td>
-                                            <td><?php echo htmlentities($result->doc_num);?></td>
                                             <td><?php echo htmlentities($result->id_habitacion);?></td>
+                                            <td><?php echo htmlentities($result->check_in);?></td>
+                                            <td><?php echo htmlentities($result->check_out);?></td>
 											<td>
 											<?php if ($_SESSION['alogin']===true){?>
 												<a href="rental.php?edit=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Editar?');">&nbsp; <i class="fa fa-pencil fa-lg"></i></a>&nbsp;&nbsp;
-												<a href="admin-rentals.php?del=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Eliminar?');"><i class="fa fa-trash fa-lg" style="color:red"></i></a>&nbsp;&nbsp;
+												<a href="admin-bookings.php?del=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Eliminar?');"><i class="fa fa-trash fa-lg" style="color:red"></i></a>&nbsp;&nbsp;
 											<?php }else{?>
 												<a href="rental.php?view=<?php echo $result->id;?>">&nbsp; <i class="fa fa-info-circle fa-lg"></i></a>&nbsp;&nbsp;											
 											<?php }?>

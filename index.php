@@ -14,7 +14,7 @@ if(isset($_POST['login'])){
 		$_SESSION['ilogin']=$result->id;
 		$_SESSION['nlogin']=$result->nombres;
 		$_SESSION['img_login']=$result->imagen;
-		$_SESSION['alogin']=true;
+		$_SESSION['alogin']=false;
 		echo "<script type='text/javascript'> document.location = 'admin-guests.php'; </script>";
 	}else{
 		echo "<script>alert('Datos no válidos');</script>";

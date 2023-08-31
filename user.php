@@ -12,8 +12,8 @@ $id = $_GET['edit'];
 $titulo = "Añadir Recepcionista";
 
 if(isset($_POST['submit'])){
-	$file = $_FILES['image']['name'];
-	$file_loc = $_FILES['image']['tmp_name'];
+	$file = $_FILES['imagen']['name'];
+	$file_loc = $_FILES['imagen']['tmp_name'];
 	$folder="images/";
 	$new_file_name = strtolower($file);
 	$final_file=str_replace(' ','-',$new_file_name);

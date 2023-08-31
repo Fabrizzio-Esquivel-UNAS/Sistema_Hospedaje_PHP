@@ -10,11 +10,11 @@ if($_SESSION===NULL){
 $msg; $error;
 
 if(isset($_GET['del'])){
-	$sql = "DELETE FROM huespedes WHERE id=:id";
+	$sql = "DELETE FROM huespedes WHERE id=:v1";
 	$query = $dbh->prepare($sql);
-	$query -> bindParam(':id', $_GET['del'], PDO::PARAM_STR);
+	$query -> bindParam(':v1', $_GET['del'], PDO::PARAM_STR);
 	$query -> execute();
-	$msg = "Datos eliminados correctamente";
+	$msg = "Datos Eliminados Correctamente";
 }else if(isset($_GET['msg'])){
 	$msg = urldecode($_GET['msg']);
 }
@@ -101,7 +101,8 @@ if(isset($_GET['del'])){
 									</thead>
 									<tbody>
 									<?php
-									$sql = "SELECT * FROM huespedes";
+									$sql = "SELECT hu.id, hu.nombres, hu.apellidos, hu.doc_num, ha.id AS id_habitacion FROM huespedes hu
+									LEFT JOIN habitaciones ha ON (SELECT 1 FROM alquileres a WHERE a.id=ha.id_alquiler AND hu.id=a.id_huesped)";
 									$query = $dbh -> prepare($sql);
 									$query->execute();
 									$results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -113,7 +114,11 @@ if(isset($_GET['del'])){
                                             <td><?php echo htmlentities($result->apellidos);?></td>
                                             <td><?php echo htmlentities($result->doc_num);?></td>
                                             <td>
-												<a href="rental.php?new=<?php echo $result->id;?>">&nbsp; <i class="fa fa-address-book fa-lg"></i></a>&nbsp;&nbsp;
+												<?php if (isset($result->id_habitacion)){?>
+													<?php echo htmlentities($result->id_habitacion);?>
+												<?php }else{?>
+													<a href="rental.php?new=<?php echo $result->id;?>">&nbsp; <i class="fa fa-address-book fa-lg"></i></a>&nbsp;&nbsp;
+												<?php }?>
 											</td>
 											<td>
 												<a href="guest.php?edit=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Editar?');">&nbsp; <i class="fa fa-pencil fa-lg"></i></a>&nbsp;&nbsp;
