@@ -14,7 +14,18 @@ if(isset($_POST['login'])){
 		$_SESSION['ilogin']=$result->id;
 		$_SESSION['nlogin']=$result->nombres;
 		$_SESSION['img_login']=$result->imagen;
-		$_SESSION['alogin']=false;
+		if ($query->id === 0){
+			$_SESSION['alogin'] = true;
+			$DB_USER = "root";
+		}else{
+			$DB_USER = 'recepcionista';
+			$DB_PASS = '12345';
+		}
+		try{
+			$dbh = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, $DB_USER, $DB_PASS ,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+		}catch (PDOException $e){
+			exit("Error: " . $e->getMessage());
+		}
 		echo "<script type='text/javascript'> document.location = 'admin-guests.php'; </script>";
 	}else{
 		echo "<script>alert('Datos no válidos');</script>";

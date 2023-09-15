@@ -7,14 +7,15 @@ if($_SESSION===NULL){
 	exit;
 }
 
-$msg; $error;
+$msg = null; 
+$error = null;
 
 if(isset($_GET['del'])){
-	$sql = "DELETE FROM huespedes WHERE id=:v1";
+	$sql = "DELETE FROM registros WHERE id=:id";
 	$query = $dbh->prepare($sql);
-	$query -> bindParam(':v1', $_GET['del'], PDO::PARAM_STR);
+	$query -> bindParam(':id', $_GET['del'], PDO::PARAM_STR);
 	$query -> execute();
-	$msg = "Datos Eliminados Correctamente";
+	$msg = "Datos eliminados correctamente";
 }else if(isset($_GET['msg'])){
 	$msg = urldecode($_GET['msg']);
 }
@@ -32,7 +33,7 @@ if(isset($_GET['del'])){
 	<meta name="author" content="">
 	<meta name="theme-color" content="#3e454c">
 	
-	<title>Huespedes</title>
+	<title>Habitaciones</title>
 
 	<!-- Font awesome -->
 	<link rel="stylesheet" href="css/font-awesome.min.css">
@@ -78,32 +79,32 @@ if(isset($_GET['del'])){
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-12">
-						<h2 class="page-title">Huespedes</h2>
+						<h2 class="page-title">Habitaciones</h2>
 						<!-- Zero Configuration Table -->
 						<div class="panel panel-default">
-							<div class="panel-heading">Lista de Huespedes</div>
+							<div class="panel-heading">Lista de Habitaciones</div>
 							<div class="panel-body">
-							<?php echo htmlentities($DB_USER)
-							if($error){?>
+							<?php if($error){?>
 								<div class="errorWrap" id="msgshow"> <?php echo htmlentities($error);?> </div>
-							<?php } else if($msg){?>
+							<?php }else if($msg){?>
 								<div class="succWrap" id="msgshow"> <?php echo htmlentities($msg);?> </div>
 							<?php }?>
 								<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 									<thead>
 										<tr>
 											<th>ID</th>
-											<th>Nombre(s)</th>
-											<th>Apellido(s)</th>
-											<th>Documento</th>
-											<th>Habitación</th>
+											<th>Tipo</th>
+											<th>Precio</th>
+											<th>Estado</th>
 											<th>Acción</th>	
 										</tr>
 									</thead>
 									<tbody>
 									<?php
-									$sql = "SELECT hu.id, hu.nombres, hu.apellidos, hu.doc_num, ha.id AS id_habitacion FROM huespedes hu
-									LEFT JOIN habitaciones ha ON (SELECT 1 FROM alquileres a WHERE a.id=ha.id_alquiler AND hu.id=a.id_huesped)";
+									$sql = 
+									"SELECT h.id, h.tipo, h.precio, h.id_alquiler, a.id_pago, h.estado_limpieza
+									FROM habitaciones h 
+									LEFT JOIN alquileres a ON h.id_alquiler=a.id";
 									$query = $dbh -> prepare($sql);
 									$query->execute();
 									$results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -111,19 +112,31 @@ if(isset($_GET['del'])){
 										foreach($results as $result){?>
 										<tr>
 											<td><?php echo htmlentities($result->id);?></td>
-                                            <td><?php echo htmlentities($result->nombres);?></td>
-                                            <td><?php echo htmlentities($result->apellidos);?></td>
-                                            <td><?php echo htmlentities($result->doc_num);?></td>
+                                            <td><?php echo htmlentities($result->tipo);?></td>
+                                            <td><?php echo htmlentities($result->precio);?></td>
                                             <td>
-												<?php if (isset($result->id_habitacion)){?>
-													<?php echo htmlentities($result->id_habitacion);?>
-												<?php }else{?>
-													<a href="rental.php?new=<?php echo $result->id;?>">&nbsp; <i class="fa fa-address-book fa-lg"></i></a>&nbsp;&nbsp;
-												<?php }?>
+												<?php 
+												if (isset($result->id_alquiler)){
+														echo "OCUPADO";
+														if (isset($result->id_pago)){
+														}else{
+															echo ", IMPAGADO";
+														};
+													}else{
+														echo "DISPONIBLE";
+												}
+												if ($result->estado_limpieza===0){
+													echo ", SUCIO";
+												}
+												?>
 											</td>
 											<td>
-												<a href="guest.php?edit=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Editar?');">&nbsp; <i class="fa fa-pencil fa-lg"></i></a>&nbsp;&nbsp;
-												<a href="admin-guests.php?del=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Eliminar?');"><i class="fa fa-trash fa-lg" style="color:red"></i></a>&nbsp;&nbsp;
+											<?php if ($_SESSION['alogin']){?>
+												<a href="room.php?edit=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Editar?');">&nbsp; <i class="fa fa-pencil fa-lg"></i></a>&nbsp;&nbsp;
+												<a href="admin-rooms.php?del=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Eliminar?');"><i class="fa fa-trash fa-lg" style="color:red"></i></a>&nbsp;&nbsp;
+											<?php }else{?>
+												<a href="room.php?view=<?php echo $result->id;?>">&nbsp; <i class="fa fa-info-circle fa-lg"></i></a>&nbsp;&nbsp;											
+											<?php }?>
 											</td>
 										</tr>
 										<?php }
@@ -132,11 +145,13 @@ if(isset($_GET['del'])){
 								</table>
 							</div>
 						</div>
+						<?php if ($_SESSION['alogin']){?>
 						<div class="form-group">
-							<form action="guest.php">
-								<button class="btn btn-primary" type="submit">Añadir huesped</button>
+							<form action="room.php">
+								<button class="btn btn-primary" type="submit">Añadir Habitación</button>
 							</form>							
 						</div>
+						<?php }?>
 					</div>
 				</div>
 			</div>
@@ -154,12 +169,11 @@ if(isset($_GET['del'])){
 	<script src="js/chartData.js"></script>
 	<script src="js/main.js"></script>
 	<script type="text/javascript">
-				 $(document).ready(function () {          
-					setTimeout(function() {
-						$('.succWrap').slideUp("slow");
-					}, 3000);
-					});
-		</script>
-		
+		$(document).ready(function () {          
+		setTimeout(function() {
+			$('.succWrap').slideUp("slow");
+		}, 3000);
+		});
+	</script>
 </body>
 </html>

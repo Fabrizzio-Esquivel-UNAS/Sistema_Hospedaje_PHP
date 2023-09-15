@@ -30,17 +30,17 @@ SET time_zone = "+00:00";
 CREATE TABLE `alquileres` (
   `id` int NOT NULL,
   `id_huesped` int DEFAULT NULL,
-  `id_habitacion` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `id_habitacion` varchar(4) CHARACTER SET utf8mb4 DEFAULT NULL,
   `id_recepcionista` int DEFAULT NULL,
   `id_pago` int DEFAULT NULL,
   `fecha_alquiler` date DEFAULT NULL,
   `dias` int DEFAULT NULL,
   `costo` double DEFAULT NULL,
   `personas` int DEFAULT NULL,
-  `motivo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `procedencia` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `motivo` varchar(100) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `procedencia` varchar(100) CHARACTER SET utf8mb4 DEFAULT NULL,
   `comentarios` varchar(200) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -49,13 +49,13 @@ CREATE TABLE `alquileres` (
 --
 
 CREATE TABLE `habitaciones` (
-  `id` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `id` varchar(4) CHARACTER SET utf8mb4 NOT NULL,
   `id_alquiler` int DEFAULT NULL,
-  `tipo` enum('SIMPLE','DOBLE','FAMILIAR','MATRIMONIAL') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `tipo` enum('SIMPLE','DOBLE','FAMILIAR','MATRIMONIAL') CHARACTER SET utf8mb4 DEFAULT NULL,
   `precio` double DEFAULT NULL,
-  `desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `desc` varchar(500) CHARACTER SET utf8mb4 DEFAULT NULL,
   `estado_limpieza` tinyint(1) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `habitaciones`
@@ -75,11 +75,11 @@ CREATE TABLE `huespedes` (
   `id` int NOT NULL,
   `nombres` varchar(100) DEFAULT NULL,
   `apellidos` varchar(100) DEFAULT NULL,
-  `doc_tipo` enum('DNI','CE','P') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `doc_tipo` enum('DNI','CE','P') CHARACTER SET utf8mb4 DEFAULT NULL,
   `doc_num` varchar(50) DEFAULT NULL,
   `sexo` enum('M','F') DEFAULT NULL,
   `fecha_registro` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `huespedes`
@@ -98,9 +98,9 @@ CREATE TABLE `movimientos` (
   `id` int NOT NULL,
   `id_alquiler` int DEFAULT NULL,
   `id_recepcionista` int DEFAULT NULL,
-  `tipo` enum('CHECK-IN','CHECK-OUT','ENTRADA','SALIDA') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `tipo` enum('CHECK-IN','CHECK-OUT','ENTRADA','SALIDA') CHARACTER SET utf8mb4 DEFAULT NULL,
   `fecha_movimiento` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -110,9 +110,9 @@ CREATE TABLE `movimientos` (
 
 CREATE TABLE `pagos` (
   `id` int NOT NULL,
-  `tipo_pago` enum('EFECTIVO','YAPE') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `tipo_pago` enum('EFECTIVO','YAPE') CHARACTER SET utf8mb4 NOT NULL,
   `monto` double NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -122,14 +122,14 @@ CREATE TABLE `pagos` (
 
 CREATE TABLE `recepcionistas` (
   `id` int NOT NULL,
-  `nombres` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `nombres` varchar(100) CHARACTER SET utf8mb4 DEFAULT NULL,
   `apellidos` varchar(100) DEFAULT NULL,
-  `dni` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `correo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `telefono` varchar(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `dni` varchar(8) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `correo` varchar(100) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `telefono` varchar(9) CHARACTER SET utf8mb4 DEFAULT NULL,
   `clave` varchar(100) DEFAULT NULL,
-  `imagen` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'user.png'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `imagen` varchar(50) CHARACTER SET utf8mb4 NOT NULL DEFAULT 'user.png'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `recepcionistas`
@@ -149,7 +149,7 @@ CREATE TABLE `reservas` (
   `id_alquiler` int NOT NULL,
   `check_in` date NOT NULL,
   `check_out` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Indexes for dumped tables
