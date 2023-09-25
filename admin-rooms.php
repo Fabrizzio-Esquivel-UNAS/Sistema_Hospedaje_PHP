@@ -2,7 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-if($_SESSION===NULL){
+if(!isset($_SESSION['id'])){
 	header('location:index.php');
 	exit;
 }
@@ -131,7 +131,7 @@ if(isset($_GET['del'])){
 												?>
 											</td>
 											<td>
-											<?php if ($_SESSION['alogin']){?>
+											<?php if ($_SESSION['id']===0){?>
 												<a href="room.php?edit=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Editar?');">&nbsp; <i class="fa fa-pencil fa-lg"></i></a>&nbsp;&nbsp;
 												<a href="admin-rooms.php?del=<?php echo $result->id;?>" onclick="return confirm('¿Realmente desea Eliminar?');"><i class="fa fa-trash fa-lg" style="color:red"></i></a>&nbsp;&nbsp;
 											<?php }else{?>
@@ -145,7 +145,7 @@ if(isset($_GET['del'])){
 								</table>
 							</div>
 						</div>
-						<?php if ($_SESSION['alogin']){?>
+						<?php if ($_SESSION['id']===0){?>
 						<div class="form-group">
 							<form action="room.php">
 								<button class="btn btn-primary" type="submit">Añadir Habitación</button>

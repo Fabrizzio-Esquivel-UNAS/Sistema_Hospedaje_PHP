@@ -2,7 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-if($_SESSION===NULL){
+if(!isset($_SESSION['id'])){
 	header('location:index.php');
 	exit;
 }
@@ -53,7 +53,7 @@ if(isset($_POST['submit'])){
 	}
 
 	$query-> bindParam(':v3', $id_habitacion, PDO::PARAM_STR);
-	$query-> bindParam(':v4', $_SESSION['ilogin'], PDO::PARAM_STR);
+	$query-> bindParam(':v4', $_SESSION['id'], PDO::PARAM_STR);
 	$query-> bindParam(':v5', $id_pago, PDO::PARAM_STR);
 	$query-> bindParam(':v6', $_POST['fecha_alquiler'], PDO::PARAM_STR);
 	$query-> bindParam(':v7', $_POST['check_in'], PDO::PARAM_STR);

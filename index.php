@@ -4,29 +4,18 @@ include('includes/config.php');
 if(isset($_POST['login'])){
 	$userid=$_POST['userid'];
 	$password=$_POST['password'];
-	$sql ="SELECT * FROM recepcionistas WHERE id=:v1 and clave=:v2";
+	$sql ="SELECT id,nombres,apellidos,imagen FROM recepcionistas WHERE id=:v1 and clave=:v2";
 	$query= $dbh -> prepare($sql);
 	$query-> bindParam(':v1', $userid, PDO::PARAM_STR);
 	$query-> bindParam(':v2', $password, PDO::PARAM_STR);
 	$query-> execute();
 	$result=$query->fetch(PDO::FETCH_OBJ);
 	if($query->rowCount()!==0){
-		$_SESSION['ilogin']=$result->id;
-		$_SESSION['nlogin']=$result->nombres;
-		$_SESSION['img_login']=$result->imagen;
-		if ($query->id === 0){
-			$_SESSION['alogin'] = true;
-			$DB_USER = "root";
-		}else{
-			$DB_USER = 'recepcionista';
-			$DB_PASS = '12345';
-		}
-		try{
-			$dbh = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, $DB_USER, $DB_PASS ,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
-		}catch (PDOException $e){
-			exit("Error: " . $e->getMessage());
-		}
-		echo "<script type='text/javascript'> document.location = 'admin-guests.php'; </script>";
+		$_SESSION['id']=$result->id;
+		$_SESSION['name']=$result->nombres;
+		$_SESSION['img']=$result->imagen;
+		header('location:admin-guests.php');
+		exit;
 	}else{
 		echo "<script>alert('Datos no válidos');</script>";
 	}

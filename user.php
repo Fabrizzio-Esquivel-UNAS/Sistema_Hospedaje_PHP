@@ -2,7 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-if($_SESSION===NULL || ($_SESSION['alogin']!==true /*&& $_GET['edit']!==NULL*/ && $_GET['edit']!=$_SESSION['ilogin'])){
+if(!isset($_SESSION['id']) || ($_SESSION['id']!==0 /*&& $_GET['edit']!==NULL*/ && $_GET['edit']!=$_SESSION['id'])){
 	header('location:index.php');
 	exit;
 }
@@ -114,7 +114,7 @@ if(isset($_GET['edit'])){
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-12">
-						<?php if ($_SESSION['alogin']==true) {?>
+						<?php if ($_SESSION['id']===0) {?>
 							<h3 class="page-title"><?php echo htmlentities($titulo); $id==NULL?"":$result->nombres." ".$result->apellidos ?></h3>
 						<?php }?>
 						<div class="row">

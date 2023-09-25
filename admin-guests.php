@@ -2,7 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-if($_SESSION===NULL){
+if(!isset($_SESSION['id'])){
 	header('location:index.php');
 	exit;
 }
@@ -83,7 +83,7 @@ if(isset($_GET['del'])){
 						<div class="panel panel-default">
 							<div class="panel-heading">Lista de Huespedes</div>
 							<div class="panel-body">
-							<?php echo htmlentities($DB_USER)
+							<?php 
 							if($error){?>
 								<div class="errorWrap" id="msgshow"> <?php echo htmlentities($error);?> </div>
 							<?php } else if($msg){?>

@@ -2,7 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-if($_SESSION===NULL){
+if(!isset($_SESSION['id'])){
 	header('location:index.php');
 	exit;
 }
